@@ -134,6 +134,9 @@ datasets/testing
 
 # Weights
 weights/
+*.pth
+*.pt
+*.ckpt
 
 # Vscode settings
 .vscode
@@ -153,6 +156,11 @@ citrus_project/dataset_workspace/projection_alignment_audit
 citrus_project/research/generated/
 tmp_trainer_wiring_smoke/
 citrus_project/milestones/03_self_supervised_adaptation/runs/
+citrus_project/milestones/**/runs/
+citrus_project/milestones/**/snapshots/
+citrus_project/milestones/**/results/
+citrus_project/milestones/**/logs/
+*.log
 
 # Local Codex project config / MCP secrets
 .codex/

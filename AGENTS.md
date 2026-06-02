@@ -1208,6 +1208,7 @@ Milestone 4 hybrid checkpoint scan result:
 24. Added `PRESENTATION_6_MIN_SCRIPT.md` as a shorter presentation script with one compact speaking paragraph per slide, suggested visuals, and short backup answers for likely questions.
 25. Added `PRESENTATION_6_MIN_SCRIPT_GOOGLE_DOCS.docx` as a Google-Docs-friendly document version of the concise 6-minute script; the file is present in both the active long-path workspace and the `C:/Proj/lite-Mono` presentation package.
 26. Added `LAB_COMPUTER_SETUP.md` as a clean-transfer/lab-machine onboarding note covering tmux, environment setup, dataset download paths, dataset preparation order, and the reminder not to commit datasets/weights/runs.
+27. Tightened `.gitignore` for lab-transfer safety so future weights/checkpoints, milestone runs/results/snapshots/logs, and log files do not flood source control after training or evaluation on the lab machine.
 
 ## Change Log
 
@@ -1320,6 +1321,7 @@ Milestone 4 hybrid checkpoint scan result:
 - 2026-05-25: Added `PRESENTATION_6_MIN_SCRIPT.md` to the progress-presentation package as a concise 6-minute version of the full slide script.
 - 2026-05-26: Generated `PRESENTATION_6_MIN_SCRIPT_GOOGLE_DOCS.docx` from the concise Markdown script so it can be opened or uploaded directly into Google Docs.
 - 2026-06-02: Added `LAB_COMPUTER_SETUP.md` for the lab-computer transfer workflow and began preparing a clean GitHub-transfer repo that includes project code/docs/READMEs/AGENTS while excluding local datasets, weights, caches, and bulky run outputs.
+- 2026-06-02: Tightened `.gitignore` for lab-machine use by ignoring checkpoint files, milestone runs/results/snapshots/log folders, and log files to prevent large generated artifacts from appearing in source control.
 
 ## Update Template (For Future Changes)
 
