@@ -1,0 +1,195 @@
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║           MILESTONE 3 TRAINING FAILURE: THE CORE PROBLEM                 ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+DEPTH QUALITY DEGRADATION OVER 1000 TRAINING STEPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Metric: median-scaled abs_rel (lower is better)
+Baseline:  0.3680 ████████
+Step 250:  0.4542 ██████████
+Step 500:  0.6325 ███████████████
+Step 750:  0.6152 ██████████████
+Step 1000: 0.6615 ████████████████
+
+Trend: ↗️ WORSENING (opposite of desired direction)
+
+
+RELATIVE DEPTH STRUCTURE COLLAPSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Metric: median-scaled a1 (higher is better, max=1.0)
+Baseline:  0.4807 ███████████████████████████
+Step 250:  0.4290 █████████████████████
+Step 500:  0.2445 ███████████
+Step 750:  0.2366 ███████████
+Step 1000: 0.1827 █████████
+
+Degradation: -61.9% in accuracy threshold metric
+Warning: Model is becoming SMOOTHER and LESS ACCURATE
+
+
+WHAT'S WRONG WITH THE LOSS FUNCTION?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Photometric Loss Equation:
+    L_photo = |I_current - warp(I_next, depth_pred, pose_pred)|
+
+This loss minimizes IMAGE WARPING ERROR, but in vegetation:
+
+  ✗ Multiple wrong depths produce low photo loss
+  ✗ Leaves at 2m look like leaves at 4m
+  ✗ Model picks ANY depth that matches images
+  ✗ Doesn't pick the CORRECT depth
+
+
+Ground Truth Alignment:
+    L_depth = |depth_pred - depth_gt|
+
+This is what we actually need, but we DON'T optimize it.
+Result: METRIC MISMATCH between training objective and evaluation
+
+
+EVIDENCE: THE LOSS-QUALITY DISCONNECT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Step 0-250:   Photo loss ↓ (improved)   |  a1 ↓ (worsened)
+Step 250-500: Photo loss ↓ (improved)   |  a1 ↓↓ (worsened a lot)
+Step 500-750: Photo loss ↓ (improved)   |  a1 ≈ (no improvement)
+Step 750-1000:Photo loss ↓ (improved)   |  a1 ↓ (worsened more)
+
+Conclusion: As we optimize photo loss, depth structure BREAKS.
+This is not a convergence problem. It's an objective mismatch.
+
+
+WHY BATCH NORMALIZATION MAKES IT WORSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Frozen encoder has 18 BatchNorm layers.
+BatchNorm has TWO types of parameters:
+  1. Weights/biases (frozen) → protected ✓
+  2. Running statistics (buffers) → NOT frozen ✗
+
+With batch size 4:
+  • BN statistics are noisy (mean/var computed on 4 samples)
+  • Over 1000 steps: 1069 batches
+  • Each batch updates running statistics by 10% (momentum=0.1)
+  • After 100 batches: 90% of original statistics gone
+  • After 1069 batches: Statistics completely corrupted
+
+Result: Frozen encoder + corrupted BN = representation corruption
+
+
+WHAT WE TRIED (ALL FAILED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Recipe 1: Standard depth LR, batch size 4
+  Result: abs_rel 0.3680 → 0.4713 (worse)
+  ✗ Failed
+
+Recipe 2: Low depth LR (0.1x), batch size 4
+  Result: abs_rel 0.3680 → 0.4670 (worse)
+  ✗ Failed
+
+Recipe 3: No color augmentation, 250 steps
+  Result: abs_rel 0.3680 → 0.4108 (worse)
+  ✗ Failed
+
+Recipe 4: No color augmentation, 500 steps
+  Result: abs_rel 0.3680 → 0.5300 (worse)
+  ✗ Failed
+
+Recipe 5: Batch size 4, DropPath=0, 125 steps
+  Result: abs_rel 0.3680 → 0.8251 (much worse)
+  ✗ Failed
+
+Recipe 6: Batch size 4, low LR, frozen encoder, 1000 steps (CONSERVATIVE)
+  Result: abs_rel 0.3680 → 0.6615 (worse)
+  a1: 0.4807 → 0.1827 (much worse)
+  ✗ Failed
+
+Conclusion: NO hyperparameter tuning fixes this.
+The loss function itself is wrong.
+
+
+WHAT DOESN'T WORK IN MILESTONE 4:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ Training longer
+   • We trained 1000 steps, it got WORSE
+   • Not a convergence problem
+
+❌ Lower learning rates
+   • Tried 0.1x LR, still failed
+   • Learning rate doesn't fix objective mismatch
+
+❌ Smaller batches
+   • Smaller batch → noisier BN → more drift → worse
+
+❌ More regularization (smoothness)
+   • Smoothness loss is 1000x weaker than photo loss
+   • Increasing it breaks convergence without helping
+
+❌ Different initialization
+   • Tried scratch and pretrained pose
+   • Both failed the same way
+
+
+WHAT MILESTONE 4 MUST DO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Add auxiliary loss that directly rewards depth accuracy
+✓ Use LiDAR constraints to remove vegetation ambiguity
+✓ Keep photo loss but add structure preservation
+✓ Test on 50-sample pilot before full run
+
+
+RECOMMENDED SOLUTION: Relative Depth Ranking Loss
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Idea: LiDAR tells us which pixels are closer/farther.
+      Make predictions respect those orderings.
+
+For each pixel pair (i, j):
+  LiDAR depth order: sign(depth_LiDAR[i] - depth_LiDAR[j])
+  Predicted order: sign(depth_pred[i] - depth_pred[j])
+  Loss: penalize disagreement
+
+Why it works:
+  ✓ Protects relative structure (what a1 metric cares about)
+  ✓ Doesn't over-constrain absolute scale
+  ✓ Removes vegetation ambiguity
+  ✓ Complements photo loss rather than replacing it
+
+Expected improvement:
+  → median-scaled a1: 0.48+ (baseline or better)
+  → median-scaled abs_rel: 0.36-0.37 (close to baseline)
+
+
+KEY INSIGHT:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+The problem with Milestone 3:
+
+  Training tries to minimize: |I_current - I_warped|
+  But we actually need:      |depth_pred - depth_gt|
+  
+  In vegetation, these are DECOUPLED:
+    • Wrong depth can produce correct image warping
+    • Correct image warping might hide wrong depth
+  
+  Solution: Add constraint that connects them:
+    • Use LiDAR to say "depth order must be: A > B > C"
+    • Now photo loss must satisfy BOTH:
+      1. Images warp correctly
+      2. Depth orders match LiDAR
+    
+  Result: No more freedom to pick arbitrary wrong depth.
+          Among photo-good solutions, pick depth-good ones.
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    END OF ANALYSIS - NEXT STEP:                         ║
+║                 Implement relative depth ranking loss                    ║
+║              and test on 50-step pilot before full training              ║
+╚══════════════════════════════════════════════════════════════════════════╝

@@ -1,0 +1,53 @@
+[
+  {
+    "role": "good",
+    "index": 24,
+    "rgb_rel": "extracted_rgbd/zed2i_zed_node_left_image_rect_color/zed_2023-07-18-14-29-41_6_bag_1689715802347341112.png",
+    "dense_rel": "prepared_training_dataset/dense_lidar_npz/zed_2023-07-18-14-29-41_6_bag_1689715802347341112.npz",
+    "valid_mask_rel": "prepared_training_dataset/dense_lidar_valid_mask_npz/zed_2023-07-18-14-29-41_6_bag_1689715802347341112.npz",
+    "panel_path": "D:\\IBPI\\Image Proc-AI Assisted-SP1\\Lite-Mono\\citrus_project\\milestones\\01_original_lite_mono_baseline\\visuals\\good_index_0024_median_scaled_a1_0.771.png",
+    "valid_fraction": 0.4316905381944444,
+    "scale_ratio": 3.2482524529605383,
+    "raw_abs_rel": 0.7011817200671627,
+    "raw_a1": 0.0006183297054639232,
+    "median_scaled_abs_rel": 0.18207052218705508,
+    "median_scaled_a1": 0.7708761681655716,
+    "display_depth_min_m": 1.0279357981681823,
+    "display_depth_max_m": 9.905208225250243,
+    "error_display_max_m": 4.994849681854248
+  },
+  {
+    "role": "typical",
+    "index": 7,
+    "rgb_rel": "extracted_rgbd/zed2i_zed_node_left_image_rect_color/zed_2023-07-18-14-29-41_6_bag_1689715800649283928.png",
+    "dense_rel": "prepared_training_dataset/dense_lidar_npz/zed_2023-07-18-14-29-41_6_bag_1689715800649283928.npz",
+    "valid_mask_rel": "prepared_training_dataset/dense_lidar_valid_mask_npz/zed_2023-07-18-14-29-41_6_bag_1689715800649283928.npz",
+    "panel_path": "D:\\IBPI\\Image Proc-AI Assisted-SP1\\Lite-Mono\\citrus_project\\milestones\\01_original_lite_mono_baseline\\visuals\\typical_index_0007_median_scaled_a1_0.530.png",
+    "valid_fraction": 0.3785677083333333,
+    "scale_ratio": 4.832718241892245,
+    "raw_abs_rel": 0.7475708662951653,
+    "raw_a1": 0.0007394923299167642,
+    "median_scaled_abs_rel": 0.31684517194580325,
+    "median_scaled_a1": 0.5301214143220747,
+    "display_depth_min_m": 1.1306374073028564,
+    "display_depth_max_m": 16.310678482055664,
+    "error_display_max_m": 9.840845546722427
+  },
+  {
+    "role": "bad",
+    "index": 46,
+    "rgb_rel": "extracted_rgbd/zed2i_zed_node_left_image_rect_color/zed_2023-07-18-14-29-41_6_bag_1689715804538866296.png",
+    "dense_rel": "prepared_training_dataset/dense_lidar_npz/zed_2023-07-18-14-29-41_6_bag_1689715804538866296.npz",
+    "valid_mask_rel": "prepared_training_dataset/dense_lidar_valid_mask_npz/zed_2023-07-18-14-29-41_6_bag_1689715804538866296.npz",
+    "panel_path": "D:\\IBPI\\Image Proc-AI Assisted-SP1\\Lite-Mono\\citrus_project\\milestones\\01_original_lite_mono_baseline\\visuals\\bad_index_0046_median_scaled_a1_0.076.png",
+    "valid_fraction": 0.3822200520833333,
+    "scale_ratio": 1.981618062920605,
+    "raw_abs_rel": 0.6208237787306602,
+    "raw_a1": 0.11647845020922402,
+    "median_scaled_abs_rel": 0.620418598117039,
+    "median_scaled_a1": 0.0761354022949349,
+    "display_depth_min_m": 0.5336744952201843,
+    "display_depth_max_m": 12.101432418823242,
+    "error_display_max_m": 8.528952064514161
+  }
+]

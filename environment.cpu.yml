@@ -1,0 +1,31 @@
+name: lite-mono-cpu
+channels:
+  - pytorch
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - numpy<2.0
+  - pillow
+  - matplotlib
+  - scikit-image
+  - pip
+
+  # --- PyTorch (CPU / platform default) ---
+  - pytorch::pytorch>=1.12,<2.1
+  - pytorch::torchvision
+
+  # --- pip-only packages ---
+  - pip:
+      - opencv-python<4.10
+      - wget
+      - requests
+      - pyyaml
+      - rosbags
+      - tensorboardX>=2.2
+      - timm==0.4.12
+      - thop
+      - six>=1.16.0
+      - fvcore>=0.1.5
+      - protobuf>=3.20,<4
+      - git+https://github.com/saadnaeem-dev/pytorch-linear-warmup-cosine-annealing-warm-restarts-weight-decay
