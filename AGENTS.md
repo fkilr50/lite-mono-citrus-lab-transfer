@@ -1209,6 +1209,9 @@ Milestone 4 hybrid checkpoint scan result:
 25. Added `PRESENTATION_6_MIN_SCRIPT_GOOGLE_DOCS.docx` as a Google-Docs-friendly document version of the concise 6-minute script; the file is present in both the active long-path workspace and the `C:/Proj/lite-Mono` presentation package.
 26. Added `LAB_COMPUTER_SETUP.md` as a clean-transfer/lab-machine onboarding note covering tmux, environment setup, dataset download paths, dataset preparation order, and the reminder not to commit datasets/weights/runs.
 27. Tightened `.gitignore` for lab-transfer safety so future weights/checkpoints, milestone runs/results/snapshots/logs, and log files do not flood source control after training or evaluation on the lab machine.
+28. Lab computer dataset build status on 2026-06-03: the transfer repo build completed under `~/lite-mono-citrus-lab-transfer` using `build_training_dataset.py --workers 8`, final/default transform `exact_lidar_parent_child_inverted`, 5683 RGB frames found, 4918 RGB-LiDAR samples paired/built, and partial dense files were successfully reused after an interrupted first run.
+29. Lab split verification on 2026-06-03: prepared dataset split counts are train=3947, val=564, test=407, total=4918. Planned first lab training gate is a hybrid supervised half-epoch run at batch size 12, approximately 164 optimizer steps, before any longer training.
+30. Transfer repo fix on 2026-06-03: the first clean transfer repo copy missed the full `Marvel/hybrid_supervised_draft` code because the active long-path workspace only had part of the folder. The clean transfer repo was patched from `C:/Proj/lite-Mono` to include `train_hybrid_supervised.py`, milestone-local `trainer.py`, `options.py`, `layers.py`, and the hybrid run/postprocess scripts. The lab machine still needs `weights/lite-mono/lite-mono-pretrain.pth` copied/downloaded separately because weights are intentionally not committed.
 
 ## Change Log
 
@@ -1322,6 +1325,9 @@ Milestone 4 hybrid checkpoint scan result:
 - 2026-05-26: Generated `PRESENTATION_6_MIN_SCRIPT_GOOGLE_DOCS.docx` from the concise Markdown script so it can be opened or uploaded directly into Google Docs.
 - 2026-06-02: Added `LAB_COMPUTER_SETUP.md` for the lab-computer transfer workflow and began preparing a clean GitHub-transfer repo that includes project code/docs/READMEs/AGENTS while excluding local datasets, weights, caches, and bulky run outputs.
 - 2026-06-02: Tightened `.gitignore` for lab-machine use by ignoring checkpoint files, milestone runs/results/snapshots/log folders, and log files to prevent large generated artifacts from appearing in source control.
+- 2026-06-03: Recorded lab-computer prepared dataset build completion: `build_training_dataset.py --workers 8` produced 4918 total samples with `exact_lidar_parent_child_inverted` after resuming from 1341 reused dense files; verify splits/metrics before starting training.
+- 2026-06-03: Recorded lab prepared split counts (train=3947, val=564, test=407) and the planned first training gate: hybrid supervised half epoch, batch size 12, about 164 optimizer steps.
+- 2026-06-03: Patched the clean transfer repo to add the missing full `Marvel/hybrid_supervised_draft` training code; lab users should pull this fix before launching the half-epoch hybrid run and still provide the Lite-Mono pretrain weight separately.
 
 ## Update Template (For Future Changes)
 

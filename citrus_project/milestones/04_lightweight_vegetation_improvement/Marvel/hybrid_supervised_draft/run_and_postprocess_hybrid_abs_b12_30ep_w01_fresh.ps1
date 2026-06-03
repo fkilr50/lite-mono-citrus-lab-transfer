@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $RepoRoot = "C:\Proj\lite-Mono"
 $Python = "C:\Proj\miniforge3\envs\lite-mono\python.exe"
-$RunName = "hybrid_supervised_b12_30ep_logl1_abs_w01_fresh"
+$RunName = "hybrid_supervised_b12_30ep_logl1_abs_w01_fresh_sched"
 $LogDir = "citrus_project/milestones/04_lightweight_vegetation_improvement/Marvel/runs"
 $RunDir = Join-Path $RepoRoot (Join-Path $LogDir $RunName)
 $TrainLog = Join-Path $RunDir "console.log"
@@ -14,8 +14,9 @@ $VisualDir = "$ResultsDir/visuals"
 
 Set-Location $RepoRoot
 New-Item -ItemType Directory -Force -Path $RunDir | Out-Null
+Start-Transcript -Path (Join-Path $RunDir "runner_transcript.log") -Append
 
-& $Python $TrainScript `
+& $Python -u $TrainScript `
   --dataset citrus `
   --split citrus_prepared `
   --data_path citrus_project/dataset_workspace `
@@ -94,3 +95,5 @@ if (-not (Test-Path $WeightsFolder)) {
   --output_dir "$VisualDir/baseline_vs_hybrid_test" `
   --baseline_name "Plain Citrus" `
   --phase2_name "Hybrid abs w0.1 30ep" 2>&1 | Tee-Object -FilePath $PostprocessLog -Append
+
+Stop-Transcript
